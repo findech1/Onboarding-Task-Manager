@@ -1,47 +1,57 @@
-import React, { useState } from 'react';
-import { db } from '../firebase';
-import { addDoc, collection, updateDoc, doc, query, orderBy, getDocs } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  updateDoc,
+  doc,
+  query,
+  getDocs,
+  getDoc,
+  setDoc,
+  orderBy
+} from 'firebase/firestore';
 
-export default function TaskForm({ refreshData }) {
-  const [task, setTask] = useState('');
-  const [date, setDate] = useState('');
-  const [facility, setFacility] = useState('');
+const assignTask = async () => {
+  if (!task || !date || !facility) return alert("Fill all fields");
 
-  const assignTask = async () => {
-    if (!task || !date || !facility) return alert("Fill all fields");
+  const consultantsSnap = await getDocs(query(collection(db, 'consultants'), orderBy('name')));
+  const consultants = consultantsSnap.docs;
+  if (consultants.length === 0) return alert("No consultants found");
 
-    const consultantsQuery = query(collection(db, 'consultants'), orderBy('lastAssigned'));
-    const consultantsSnap = await getDocs(consultantsQuery);
-    if (consultantsSnap.empty) return alert("No consultants found");
+  // Fetch roundRobin setting
+  const roundRobinRef = doc(db, 'settings', 'roundRobin');
+  let roundRobinDoc = await getDoc(roundRobinRef);
 
-    const consultant = consultantsSnap.docs[0];
-    const consultantData = consultant.data();
+  if (!roundRobinDoc.exists()) {
+    // Initialize if it doesn't exist
+    await setDoc(roundRobinRef, { lastAssignedIndex: -1 });
+    roundRobinDoc = await getDoc(roundRobinRef);
+  }
 
-    await addDoc(collection(db, 'tasks'), {
-      task,
-      date,
-      facility,
-      assignedTo: consultant.id,
-      assignedToName: consultantData.name
-    });
+  const lastIndex = roundRobinDoc.data().lastAssignedIndex || -1;
+  const nextIndex = (lastIndex + 1) % consultants.length;
+  const selectedConsultant = consultants[nextIndex];
+  const consultantData = selectedConsultant.data();
 
-    await updateDoc(doc(db, 'consultants', consultant.id), {
-      lastAssigned: new Date().toISOString()
-    });
+  // Add the task
+  await addDoc(collection(db, 'tasks'), {
+    task,
+    date,
+    facility,
+    assignedTo: selectedConsultant.id,
+    assignedToName: consultantData.name
+  });
 
-    setTask('');
-    setDate('');
-    setFacility('');
-    refreshData();
-  };
+  // Update consultant's lastAssigned
+  await updateDoc(doc(db, 'consultants', selectedConsultant.id), {
+    lastAssigned: new Date().toISOString()
+  });
 
-  return (
-    <div className="bg-white p-4 rounded shadow mb-6">
-      <h2 className="text-xl font-semibold mb-4">Assign Task</h2>
-      <input type="text" placeholder="Task" value={task} onChange={e => setTask(e.target.value)} className="w-full p-2 border rounded mb-2" />
-      <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full p-2 border rounded mb-2" />
-      <input type="text" placeholder="Facility Name" value={facility} onChange={e => setFacility(e.target.value)} className="w-full p-2 border rounded mb-2" />
-      <button onClick={assignTask} className="bg-blue-600 text-white px-4 py-2 rounded">Assign</button>
-    </div>
-  );
-}
+  // Update roundRobin lastAssignedIndex
+  await updateDoc(roundRobinRef, { lastAssignedIndex: nextIndex });
+
+  // Clear form
+  setTask('');
+  setDate('');
+  setFacility('');
+  refreshData();
+};
