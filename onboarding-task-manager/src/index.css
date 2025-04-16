@@ -1,25 +1,42 @@
-/* Add this CSS to improve the styling of the application */
+/* General body styling */
 body {
   font-family: 'Inter', sans-serif;
   background-color: #f9fafb;
   margin: 0;
   padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
-h1, h2 {
+/* Sticky title styling */
+h1 {
+  position: sticky;
+  top: 0; /* Sticks to the top of the viewport */
+  z-index: 1000; /* Ensures it stays above other elements */
+  background-color: #f9fafb; /* Matches the page background */
+  padding: 1rem 0; /* Adds spacing around the title */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for separation */
+  text-align: center;
   color: #1e3a8a;
+  margin: 0;
 }
 
-button {
-  transition: background-color 0.3s, color 0.3s;
+/* Headings styling */
+h2 {
+  color: #1e3a8a;
+  text-align: center;
+  margin: 0.5rem 0;
 }
 
-button:hover {
-  cursor: pointer;
-}
-
+/* Shared input and select styling */
 input, select {
-  transition: border-color 0.3s;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: #ffffff;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  margin-bottom: 0.5rem;
 }
 
 input:focus, select:focus {
@@ -28,43 +45,93 @@ input:focus, select:focus {
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
 }
 
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* Button styling */
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #2563eb;
+  border-radius: 4px;
+  background-color: #2563eb;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-li {
-  transition: transform 0.2s, box-shadow 0.2s;
+button:hover {
+  background-color: #1e3a8a;
 }
 
-li:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-.container {
+/* Flex container for inputs and buttons */
+.input-group {
   display: flex;
-  justify-content: space-between;
+  gap: 0.5rem;
   align-items: center;
-  padding: 1rem;
+  justify-content: space-between;
+  flex-wrap: wrap; /* Allow wrapping for smaller screens */
+}
+
+.input-group input, .input-group select {
+  flex: 1;
+  min-width: 150px; /* Ensure inputs don't shrink too much */
+}
+
+.input-group button {
+  flex: 0 0 auto;
+}
+
+/* Table container styling */
+.table-container {
+  margin: 1rem auto;
+  width: 100%;
+  max-width: 1000px; /* Limit the width of the table */
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  margin-bottom: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 1rem;
+  overflow-x: auto; /* Enable horizontal scrolling for tables */
 }
 
-.container .task {
-  flex: 2;
-  text-align: left;
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
 }
 
-.container .consultants {
-  flex: 1;
+th, td {
+  border: 1px solid #e5e7eb;
+  padding: 0.75rem;
   text-align: center;
+  word-wrap: break-word; /* Prevent text overflow */
 }
 
-.container .title {
-  flex: 1;
-  text-align: right;
+th {
+  background-color: #f3f4f6;
+  font-weight: bold;
+  color: #1e3a8a;
+}
+
+td {
+  background-color: #ffffff;
+}
+
+tr:nth-child(even) td {
+  background-color: #f9fafb;
+}
+
+tr:hover td {
+  background-color: #e5e7eb;
+}
+
+/* Center alignment for the entire page */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  max-width: 1200px; /* Limit the width of the page */
+  margin: 0 auto; /* Center the container */
+  overflow-x: hidden; /* Prevent horizontal overflow */
 }

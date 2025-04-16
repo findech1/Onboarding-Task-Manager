@@ -90,7 +90,7 @@ export default function OnboardingTaskManager() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
-      <div className="w-full max-w-2xl bg-white shadow-lg rounded-lg p-6">
+      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6">
         <h1 className="text-3xl font-bold mb-6 text-center text-blue-700">Onboarding Task Manager</h1>
 
         <div className="grid gap-4 mb-6">
@@ -125,18 +125,28 @@ export default function OnboardingTaskManager() {
         </div>
 
         <div className="mb-6">
-          <h2 className="text-xl font-semibold mb-2 text-gray-800">Consultants</h2>
-          <ul className="space-y-2">
-            {consultants.map(c => {
-              const lastAssignedDate = c.lastAssigned?.toDate?.()?.toISOString()?.split('T')[0] || 'Never';
-              return (
-                <li key={c.id} className="p-3 bg-gray-100 rounded border border-gray-300">
-                  <span className="font-medium">{c.name}</span> - {c.contact || 'No contact'}
-                  <div className="text-sm text-gray-600">Last Assigned: {lastAssignedDate}</div>
-                </li>
-              );
-            })}
-          </ul>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Consultants</h2>
+          <table className="w-full border-collapse border border-gray-400 text-center">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="border border-gray-400 p-2">Name</th>
+                <th className="border border-gray-400 p-2">Contact</th>
+                <th className="border border-gray-400 p-2">Last Assigned</th>
+              </tr>
+            </thead>
+            <tbody>
+              {consultants.map(c => {
+                const lastAssignedDate = c.lastAssigned?.toDate?.()?.toISOString()?.split('T')[0] || 'Never';
+                return (
+                  <tr key={c.id}>
+                    <td className="border border-gray-400 p-2">{c.name}</td>
+                    <td className="border border-gray-400 p-2">{c.contact || 'No contact'}</td>
+                    <td className="border border-gray-400 p-2">{lastAssignedDate}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
 
         <div className="mb-4">
@@ -150,15 +160,27 @@ export default function OnboardingTaskManager() {
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold mb-2 text-gray-800">Tasks</h2>
-          <ul className="space-y-2">
-            {filteredTasks.map((t, i) => (
-              <li key={i} className="p-3 bg-gray-50 rounded border border-gray-300">
-                <div className="text-gray-800 font-medium">{t.date}: {t.task}</div>
-                <div className="text-sm text-gray-600">Facility: {t.facility} | Assigned to: {t.assignedToName}</div>
-              </li>
-            ))}
-          </ul>
+          <h2 className="text-xl font-semibold mb-4 text-gray-800">Tasks</h2>
+          <table className="w-full border-collapse border border-gray-400 text-center">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="border border-gray-400 p-2">Date</th>
+                <th className="border border-gray-400 p-2">Task</th>
+                <th className="border border-gray-400 p-2">Facility</th>
+                <th className="border border-gray-400 p-2">Assigned To</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTasks.map((t, i) => (
+                <tr key={i}>
+                  <td className="border border-gray-400 p-2">{t.date}</td>
+                  <td className="border border-gray-400 p-2">{t.task}</td>
+                  <td className="border border-gray-400 p-2">{t.facility}</td>
+                  <td className="border border-gray-400 p-2">{t.assignedToName}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
